@@ -87,11 +87,17 @@ static pthread_mutex_t can_read_mutex = PTHREAD_MUTEX_INITIALIZER;
 static struct timespec last_set, this_set;
 
 // tx frames
-static struct can_frame AI2VCU_Status		= {0x510,8};
-static struct can_frame AI2VCU_Drive_F		= {0x511,4};
-static struct can_frame AI2VCU_Drive_R		= {0x512,4};
-static struct can_frame AI2VCU_Steer		= {0x513,2};
-static struct can_frame AI2VCU_Brake		= {0x514,2};
+#define AI2VCU_STATUS_ID    0x510
+#define AI2VCU_DRIVE_F_ID   0x511
+#define AI2VCU_DRIVE_R_ID   0x512
+#define AI2VCU_STEER_ID     0x513
+#define AI2VCU_BRAKE_ID     0x514
+
+static struct can_frame AI2VCU_Status		= {AI2VCU_STATUS_ID,8};
+static struct can_frame AI2VCU_Drive_F		= {AI2VCU_DRIVE_F_ID,4};
+static struct can_frame AI2VCU_Drive_R		= {AI2VCU_DRIVE_R_ID,4};
+static struct can_frame AI2VCU_Steer		= {AI2VCU_STEER_ID,2};
+static struct can_frame AI2VCU_Brake		= {AI2VCU_BRAKE_ID,2};
 
 // rx frames
 #define VCU2AI_STATUS_ID		0x520
@@ -139,6 +145,11 @@ static struct can_frame PCAN_GPS_GPS_DateTime;
 // static local data
 static can_stats_t can_stats;
 
+static volatile boolean_e AI2VCU_Status_fresh = FALSE;
+static volatile boolean_e AI2VCU_Drive_F_fresh = FALSE;
+static volatile boolean_e AI2VCU_Drive_R_fresh = FALSE;
+static volatile boolean_e AI2VCU_Steer_fresh = FALSE;
+static volatile boolean_e AI2VCU_Brake_fresh = FALSE;
 static volatile boolean_e VCU2AI_Status_fresh = FALSE;
 static volatile boolean_e VCU2AI_Drive_F_fresh = FALSE;
 static volatile boolean_e VCU2AI_Drive_R_fresh = FALSE;
@@ -279,6 +290,18 @@ static volatile uint8_t GPS_UTC_Hour = 0;
 static volatile uint8_t GPS_UTC_Minute = 0;
 static volatile uint8_t GPS_UTC_Second = 0;
 
+// utility to copy data from a CAN message to a buffer
+void copy_can_frame(struct can_frame src, struct can_frame dst)
+{
+    dst.data[0] = src.data[0];
+    dst.data[1] = src.data[1];
+    dst.data[2] = src.data[2];
+    dst.data[3] = src.data[3];
+    dst.data[4] = src.data[4];
+    dst.data[5] = src.data[5];
+    dst.data[6] = src.data[6];
+    dst.data[7] = src.data[7];
+}
 
 // functions
 static void *can_read_thread() {
@@ -550,6 +573,58 @@ static void *can_read_thread() {
 	
 		pthread_mutex_unlock(&can_read_mutex);	// don't forget!
 	}
+}
+
+static void *can_read_reverse_thread() 
+{
+    struct can_frame read_frame;
+
+    while (1)
+    {
+        if(can_read(&read_frame) < 0) {
+			if(debug_mode) { printf("CAN read error!\r\n"); }
+		}
+
+        pthread_mutex_lock(&can_read_mutex);
+
+        switch(read_frame.can_id)
+        {
+            case AI2VCU_STATUS_ID:
+            {
+                copy_can_frame(read_frame, AI2VCU_Status);
+                AI2VCU_Brake_fresh = TRUE;
+                break;
+            }
+            case AI2VCU_DRIVE_F_ID:
+            {
+                copy_can_frame(read_frame, AI2VCU_Drive_F);
+                AI2VCU_Drive_F_fresh = TRUE;
+                break;
+            }
+            case AI2VCU_DRIVE_R_ID:
+            {
+                copy_can_frame(read_frame, AI2VCU_Drive_R);
+                AI2VCU_Drive_R_fresh = TRUE;
+                break;
+            }
+            case AI2VCU_STEER_ID:
+            {
+                copy_can_frame(read_frame, AI2VCU_Steer);
+                AI2VCU_Steer_fresh = TRUE;
+                break;
+            }
+            case AI2VCU_BRAKE_ID:
+            {
+                copy_can_frame(read_frame, AI2VCU_Brake);
+                AI2VCU_Brake_fresh = TRUE;
+                break;
+            }
+            default:
+            {
+                perror("Unknown CAN frame ID");
+            }
+        }
+    }
 }
 
 
