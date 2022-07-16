@@ -868,8 +868,6 @@ void fs_ai_api_imu_get_data(fs_ai_api_imu *data) {
 		IMU_Temperature_degC = 0.5f*temp->sbytes[6];
 		IMU_VerticalAxis = temp->sbytes[7] & 0b00000011;
 		IMU_Orientation = (temp->sbytes[7] & 0b00011100) >> 2;
-		fprintf(stderr, "Data received: %d %d %d %d %d %d %d %d\n", IMU_Acceleration_X_mG, IMU_Acceleration_Y_mG, IMU_Acceleration_Z_mG, IMU_Temperature_degC, IMU_VerticalAxis, IMU_Orientation, temp->sbytes[0], temp->sbytes[1]);
-		perror("");
 	}
 
 	if(PCAN_GPS_BMC_MagneticField_fresh) {
