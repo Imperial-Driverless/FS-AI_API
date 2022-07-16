@@ -291,16 +291,16 @@ static volatile uint8_t GPS_UTC_Minute = 0;
 static volatile uint8_t GPS_UTC_Second = 0;
 
 // utility to copy data from a CAN message to a buffer
-void copy_can_frame(struct can_frame src, struct can_frame dst)
+void copy_can_frame(struct can_frame *src, struct can_frame *dst)
 {
-    dst.data[0] = src.data[0];
-    dst.data[1] = src.data[1];
-    dst.data[2] = src.data[2];
-    dst.data[3] = src.data[3];
-    dst.data[4] = src.data[4];
-    dst.data[5] = src.data[5];
-    dst.data[6] = src.data[6];
-    dst.data[7] = src.data[7];
+    dst->data[0] = src->data[0];
+    dst->data[1] = src->data[1];
+    dst->data[2] = src->data[2];
+    dst->data[3] = src->data[3];
+    dst->data[4] = src->data[4];
+    dst->data[5] = src->data[5];
+    dst->data[6] = src->data[6];
+    dst->data[7] = src->data[7];
 }
 
 // functions
@@ -319,131 +319,131 @@ static void *can_read_thread() {
 		{
 			case VCU2AI_STATUS_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Status);
+				copy_can_frame(&read_frame, &VCU2AI_Status);
 				VCU2AI_Status_fresh = TRUE;
 				can_stats.VCU2AI_Status_count++;
 				break;
 			}
 			case VCU2AI_DRIVE_F_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Drive_F);
+				copy_can_frame(&read_frame, &VCU2AI_Drive_F);
 				VCU2AI_Drive_F_fresh = TRUE;
 				can_stats.VCU2AI_Drive_F_count++;
 				break;
 			}
 			case VCU2AI_DRIVE_R_ID : {
-				copy_can_frame(read_frame, VCU2AI_Drive_R);
+				copy_can_frame(&read_frame, &VCU2AI_Drive_R);
 				VCU2AI_Drive_R_fresh = TRUE;
 				can_stats.VCU2AI_Drive_R_count++;
 				break;
 			}
 			case VCU2AI_STEER_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Steer);
+				copy_can_frame(&read_frame, &VCU2AI_Steer);
 				VCU2AI_Steer_fresh = TRUE;
 				can_stats.VCU2AI_Steer_count++;
 				break;
 			}
 			case VCU2AI_BRAKE_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Brake);
+				copy_can_frame(&read_frame, &VCU2AI_Brake);
 				VCU2AI_Brake_fresh = TRUE;
 				can_stats.VCU2AI_Brake_count++;
 				break;
 			}
 			case VCU2AI_WHEEL_SPEEDS_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Wheel_speeds);
+				copy_can_frame(&read_frame, &VCU2AI_Wheel_speeds);
 				VCU2AI_Wheel_speeds_fresh = TRUE;
 				can_stats.VCU2AI_Wheel_speeds_count++;
 				break;
 			}
 			case VCU2AI_WHEEL_COUNTS_ID : 
 			{
-				copy_can_frame(read_frame, VCU2AI_Wheel_counts);
+				copy_can_frame(&read_frame, &VCU2AI_Wheel_counts);
 				VCU2AI_Wheel_counts_fresh = TRUE;
 				can_stats.VCU2AI_Wheel_counts_count++;
 				break;
 			}
 			case PCAN_GPS_BMC_ACCELERATION_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_BMC_Acceleration);
+				copy_can_frame(&read_frame, &PCAN_GPS_BMC_Acceleration);
 				PCAN_GPS_BMC_Acceleration_fresh = TRUE;
 				can_stats.PCAN_GPS_BMC_Acceleration_count++;
 				break;
 			}
 			case PCAN_GPS_BMC_MAGNETICFIELD_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_BMC_MagneticField);
+				copy_can_frame(&read_frame, &PCAN_GPS_BMC_MagneticField);
 				PCAN_GPS_BMC_MagneticField_fresh = TRUE;
 				can_stats.PCAN_GPS_BMC_MagneticField_count++;
 				break;
 			}
 			case PCAN_GPS_L3GD20_ROTATION_A_ID : {
-				copy_can_frame(read_frame, PCAN_GPS_L3GD20_Rotation_A);
+				copy_can_frame(&read_frame, &PCAN_GPS_L3GD20_Rotation_A);
 				PCAN_GPS_L3GD20_Rotation_A_fresh = TRUE;
 				can_stats.PCAN_GPS_L3GD20_Rotation_A_count++;
 				break;
 			}
 			case PCAN_GPS_L3GD20_ROTATION_B_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_L3GD20_Rotation_B);
+				copy_can_frame(&read_frame, &PCAN_GPS_L3GD20_Rotation_B);
 				PCAN_GPS_L3GD20_Rotation_B_fresh = TRUE;
 				can_stats.PCAN_GPS_L3GD20_Rotation_B_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_STATUS_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Status);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Status);
 				PCAN_GPS_GPS_Status_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Status_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_COURSESPEED_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_CourseSpeed);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_CourseSpeed);
 				PCAN_GPS_GPS_CourseSpeed_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_CourseSpeed_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_POSITIONLONGITUDE_ID :
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Longitude);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Longitude);
 				PCAN_GPS_GPS_Longitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Longitude_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_POSITIONLATITUDE_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Latitude);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Latitude);
 				PCAN_GPS_GPS_Latitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Latitude_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_POSITIONALTITUDE_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Altitude);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Altitude);
 				PCAN_GPS_GPS_Altitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Altitude_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_DELUSIONS_A_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Delusions_A);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Delusions_A);
 				PCAN_GPS_GPS_Delusions_A_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Delusions_A_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_DELUSIONS_B_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_Delusions_B);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_Delusions_B);
 				PCAN_GPS_GPS_Delusions_B_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Delusions_B_count++;
 				break;
 			}
 			case PCAN_GPS_GPS_DATETIME_ID : 
 			{
-				copy_can_frame(read_frame, PCAN_GPS_GPS_DateTime);
+				copy_can_frame(&read_frame, &PCAN_GPS_GPS_DateTime);
 				PCAN_GPS_GPS_DateTime_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_DateTime_count++;
 				break;
@@ -476,31 +476,31 @@ static void *can_read_reverse_thread()
         {
             case AI2VCU_STATUS_ID:
             {
-                copy_can_frame(read_frame, AI2VCU_Status);
+                copy_can_frame(&read_frame, &AI2VCU_Status);
                 AI2VCU_Brake_fresh = TRUE;
                 break;
             }
             case AI2VCU_DRIVE_F_ID:
             {
-                copy_can_frame(read_frame, AI2VCU_Drive_F);
+                copy_can_frame(&read_frame, &AI2VCU_Drive_F);
                 AI2VCU_Drive_F_fresh = TRUE;
                 break;
             }
             case AI2VCU_DRIVE_R_ID:
             {
-                copy_can_frame(read_frame, AI2VCU_Drive_R);
+                copy_can_frame(&read_frame, &AI2VCU_Drive_R);
                 AI2VCU_Drive_R_fresh = TRUE;
                 break;
             }
             case AI2VCU_STEER_ID:
             {
-                copy_can_frame(read_frame, AI2VCU_Steer);
+                copy_can_frame(&read_frame, &AI2VCU_Steer);
                 AI2VCU_Steer_fresh = TRUE;
                 break;
             }
             case AI2VCU_BRAKE_ID:
             {
-                copy_can_frame(read_frame, AI2VCU_Brake);
+                copy_can_frame(&read_frame, &AI2VCU_Brake);
                 AI2VCU_Brake_fresh = TRUE;
                 break;
             }
@@ -868,6 +868,8 @@ void fs_ai_api_imu_get_data(fs_ai_api_imu *data) {
 		IMU_Temperature_degC = 0.5f*temp->sbytes[6];
 		IMU_VerticalAxis = temp->sbytes[7] & 0b00000011;
 		IMU_Orientation = (temp->sbytes[7] & 0b00011100) >> 2;
+		fprintf(stderr, "Data received: %d %d %d %d %d %d %d %d\n", IMU_Acceleration_X_mG, IMU_Acceleration_Y_mG, IMU_Acceleration_Z_mG, IMU_Temperature_degC, IMU_VerticalAxis, IMU_Orientation, temp->sbytes[0], temp->sbytes[1]);
+		perror("");
 	}
 
 	if(PCAN_GPS_BMC_MagneticField_fresh) {
