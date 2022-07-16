@@ -218,19 +218,19 @@ typedef volatile struct fs_ai_api_gps_struct {
 
 
 #ifdef __cplusplus
-typedef volatile struct alignas(4) fs_ai_api_imu_struct {
-	volatile float		IMU_Acceleration_X_mG;
-	volatile float		IMU_Acceleration_Y_mG;
-	volatile float		IMU_Acceleration_Z_mG;
-	volatile float		IMU_Temperature_degC;
-	volatile uint8_t	IMU_VerticalAxis;
-	volatile uint8_t	IMU_Orientation;
-	volatile float		IMU_MagneticField_X_uT;
-	volatile float		IMU_MagneticField_Y_uT;
-	volatile float		IMU_MagneticField_Z_uT;
-	volatile float		IMU_Rotation_X_degps;
-	volatile float		IMU_Rotation_Y_degps;
-	volatile float		IMU_Rotation_Z_degps;
+typedef volatile struct fs_ai_api_imu_struct {
+	alignas(4) volatile float		IMU_Acceleration_X_mG;
+	alignas(4) volatile float		IMU_Acceleration_Y_mG;
+	alignas(4) volatile float		IMU_Acceleration_Z_mG;
+	alignas(4) volatile float		IMU_Temperature_degC;
+	alignas(4) volatile uint8_t		IMU_VerticalAxis;
+	alignas(4) volatile uint8_t		IMU_Orientation;
+	alignas(4) volatile float		IMU_MagneticField_X_uT;
+	alignas(4) volatile float		IMU_MagneticField_Y_uT;
+	alignas(4) volatile float		IMU_MagneticField_Z_uT;
+	alignas(4) volatile float		IMU_Rotation_X_degps;
+	alignas(4) volatile float		IMU_Rotation_Y_degps;
+	alignas(4) volatile float		IMU_Rotation_Z_degps;
 } fs_ai_api_imu;
 #else
 typedef volatile struct fs_ai_api_imu_struct {

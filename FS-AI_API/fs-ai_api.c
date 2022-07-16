@@ -315,250 +315,135 @@ static void *can_read_thread() {
 
 		pthread_mutex_lock(&can_read_mutex); // protect the buffers from race conditions
 
-		switch(read_frame.can_id) {
-			case VCU2AI_STATUS_ID : {
-				VCU2AI_Status.data[0] = read_frame.data[0];
-				VCU2AI_Status.data[1] = read_frame.data[1];
-				VCU2AI_Status.data[2] = read_frame.data[2];
-				VCU2AI_Status.data[3] = read_frame.data[3];
-				VCU2AI_Status.data[4] = read_frame.data[4];
-				VCU2AI_Status.data[5] = read_frame.data[5];
-				VCU2AI_Status.data[6] = read_frame.data[6];
-				VCU2AI_Status.data[7] = read_frame.data[7];
+		switch(read_frame.can_id) 
+		{
+			case VCU2AI_STATUS_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Status);
 				VCU2AI_Status_fresh = TRUE;
 				can_stats.VCU2AI_Status_count++;
 				break;
 			}
-			case VCU2AI_DRIVE_F_ID : {
-				VCU2AI_Drive_F.data[0] = read_frame.data[0];
-				VCU2AI_Drive_F.data[1] = read_frame.data[1];
-				VCU2AI_Drive_F.data[2] = read_frame.data[2];
-				VCU2AI_Drive_F.data[3] = read_frame.data[3];
-				VCU2AI_Drive_F.data[4] = read_frame.data[4];
-				VCU2AI_Drive_F.data[5] = read_frame.data[5];
-				VCU2AI_Drive_F.data[6] = read_frame.data[6];
-				VCU2AI_Drive_F.data[7] = read_frame.data[7];
+			case VCU2AI_DRIVE_F_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Drive_F);
 				VCU2AI_Drive_F_fresh = TRUE;
 				can_stats.VCU2AI_Drive_F_count++;
 				break;
 			}
 			case VCU2AI_DRIVE_R_ID : {
-				VCU2AI_Drive_R.data[0] = read_frame.data[0];
-				VCU2AI_Drive_R.data[1] = read_frame.data[1];
-				VCU2AI_Drive_R.data[2] = read_frame.data[2];
-				VCU2AI_Drive_R.data[3] = read_frame.data[3];
-				VCU2AI_Drive_R.data[4] = read_frame.data[4];
-				VCU2AI_Drive_R.data[5] = read_frame.data[5];
-				VCU2AI_Drive_R.data[6] = read_frame.data[6];
-				VCU2AI_Drive_R.data[7] = read_frame.data[7];
+				copy_can_frame(read_frame, VCU2AI_Drive_R);
 				VCU2AI_Drive_R_fresh = TRUE;
 				can_stats.VCU2AI_Drive_R_count++;
 				break;
 			}
-			case VCU2AI_STEER_ID : {
-				VCU2AI_Steer.data[0] = read_frame.data[0];
-				VCU2AI_Steer.data[1] = read_frame.data[1];
-				VCU2AI_Steer.data[2] = read_frame.data[2];
-				VCU2AI_Steer.data[3] = read_frame.data[3];
-				VCU2AI_Steer.data[4] = read_frame.data[4];
-				VCU2AI_Steer.data[5] = read_frame.data[5];
-				VCU2AI_Steer.data[6] = read_frame.data[6];
-				VCU2AI_Steer.data[7] = read_frame.data[7];
+			case VCU2AI_STEER_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Steer);
 				VCU2AI_Steer_fresh = TRUE;
 				can_stats.VCU2AI_Steer_count++;
 				break;
 			}
-			case VCU2AI_BRAKE_ID : {
-				VCU2AI_Brake.data[0] = read_frame.data[0];
-				VCU2AI_Brake.data[1] = read_frame.data[1];
-				VCU2AI_Brake.data[2] = read_frame.data[2];
-				VCU2AI_Brake.data[3] = read_frame.data[3];
-				VCU2AI_Brake.data[4] = read_frame.data[4];
-				VCU2AI_Brake.data[5] = read_frame.data[5];
-				VCU2AI_Brake.data[6] = read_frame.data[6];
-				VCU2AI_Brake.data[7] = read_frame.data[7];
+			case VCU2AI_BRAKE_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Brake);
 				VCU2AI_Brake_fresh = TRUE;
 				can_stats.VCU2AI_Brake_count++;
 				break;
 			}
-			case VCU2AI_WHEEL_SPEEDS_ID : {
-				VCU2AI_Wheel_speeds.data[0] = read_frame.data[0];
-				VCU2AI_Wheel_speeds.data[1] = read_frame.data[1];
-				VCU2AI_Wheel_speeds.data[2] = read_frame.data[2];
-				VCU2AI_Wheel_speeds.data[3] = read_frame.data[3];
-				VCU2AI_Wheel_speeds.data[4] = read_frame.data[4];
-				VCU2AI_Wheel_speeds.data[5] = read_frame.data[5];
-				VCU2AI_Wheel_speeds.data[6] = read_frame.data[6];
-				VCU2AI_Wheel_speeds.data[7] = read_frame.data[7];
+			case VCU2AI_WHEEL_SPEEDS_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Wheel_speeds);
 				VCU2AI_Wheel_speeds_fresh = TRUE;
 				can_stats.VCU2AI_Wheel_speeds_count++;
 				break;
 			}
-			case VCU2AI_WHEEL_COUNTS_ID : {
-				VCU2AI_Wheel_counts.data[0] = read_frame.data[0];
-				VCU2AI_Wheel_counts.data[1] = read_frame.data[1];
-				VCU2AI_Wheel_counts.data[2] = read_frame.data[2];
-				VCU2AI_Wheel_counts.data[3] = read_frame.data[3];
-				VCU2AI_Wheel_counts.data[4] = read_frame.data[4];
-				VCU2AI_Wheel_counts.data[5] = read_frame.data[5];
-				VCU2AI_Wheel_counts.data[6] = read_frame.data[6];
-				VCU2AI_Wheel_counts.data[7] = read_frame.data[7];
+			case VCU2AI_WHEEL_COUNTS_ID : 
+			{
+				copy_can_frame(read_frame, VCU2AI_Wheel_counts);
 				VCU2AI_Wheel_counts_fresh = TRUE;
 				can_stats.VCU2AI_Wheel_counts_count++;
 				break;
 			}
-			case PCAN_GPS_BMC_ACCELERATION_ID : {
-				PCAN_GPS_BMC_Acceleration.data[0] = read_frame.data[0];
-				PCAN_GPS_BMC_Acceleration.data[1] = read_frame.data[1];
-				PCAN_GPS_BMC_Acceleration.data[2] = read_frame.data[2];
-				PCAN_GPS_BMC_Acceleration.data[3] = read_frame.data[3];
-				PCAN_GPS_BMC_Acceleration.data[4] = read_frame.data[4];
-				PCAN_GPS_BMC_Acceleration.data[5] = read_frame.data[5];
-				PCAN_GPS_BMC_Acceleration.data[6] = read_frame.data[6];
-				PCAN_GPS_BMC_Acceleration.data[7] = read_frame.data[7];
+			case PCAN_GPS_BMC_ACCELERATION_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_BMC_Acceleration);
 				PCAN_GPS_BMC_Acceleration_fresh = TRUE;
 				can_stats.PCAN_GPS_BMC_Acceleration_count++;
 				break;
 			}
-			case PCAN_GPS_BMC_MAGNETICFIELD_ID : {
-				PCAN_GPS_BMC_MagneticField.data[0] = read_frame.data[0];
-				PCAN_GPS_BMC_MagneticField.data[1] = read_frame.data[1];
-				PCAN_GPS_BMC_MagneticField.data[2] = read_frame.data[2];
-				PCAN_GPS_BMC_MagneticField.data[3] = read_frame.data[3];
-				PCAN_GPS_BMC_MagneticField.data[4] = read_frame.data[4];
-				PCAN_GPS_BMC_MagneticField.data[5] = read_frame.data[5];
-				PCAN_GPS_BMC_MagneticField.data[6] = read_frame.data[6];
-				PCAN_GPS_BMC_MagneticField.data[7] = read_frame.data[7];
+			case PCAN_GPS_BMC_MAGNETICFIELD_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_BMC_MagneticField);
 				PCAN_GPS_BMC_MagneticField_fresh = TRUE;
 				can_stats.PCAN_GPS_BMC_MagneticField_count++;
 				break;
 			}
 			case PCAN_GPS_L3GD20_ROTATION_A_ID : {
-				PCAN_GPS_L3GD20_Rotation_A.data[0] = read_frame.data[0];
-				PCAN_GPS_L3GD20_Rotation_A.data[1] = read_frame.data[1];
-				PCAN_GPS_L3GD20_Rotation_A.data[2] = read_frame.data[2];
-				PCAN_GPS_L3GD20_Rotation_A.data[3] = read_frame.data[3];
-				PCAN_GPS_L3GD20_Rotation_A.data[4] = read_frame.data[4];
-				PCAN_GPS_L3GD20_Rotation_A.data[5] = read_frame.data[5];
-				PCAN_GPS_L3GD20_Rotation_A.data[6] = read_frame.data[6];
-				PCAN_GPS_L3GD20_Rotation_A.data[7] = read_frame.data[7];
+				copy_can_frame(read_frame, PCAN_GPS_L3GD20_Rotation_A);
 				PCAN_GPS_L3GD20_Rotation_A_fresh = TRUE;
 				can_stats.PCAN_GPS_L3GD20_Rotation_A_count++;
 				break;
 			}
-			case PCAN_GPS_L3GD20_ROTATION_B_ID : {
-				PCAN_GPS_L3GD20_Rotation_B.data[0] = read_frame.data[0];
-				PCAN_GPS_L3GD20_Rotation_B.data[1] = read_frame.data[1];
-				PCAN_GPS_L3GD20_Rotation_B.data[2] = read_frame.data[2];
-				PCAN_GPS_L3GD20_Rotation_B.data[3] = read_frame.data[3];
-				PCAN_GPS_L3GD20_Rotation_B.data[4] = read_frame.data[4];
-				PCAN_GPS_L3GD20_Rotation_B.data[5] = read_frame.data[5];
-				PCAN_GPS_L3GD20_Rotation_B.data[6] = read_frame.data[6];
-				PCAN_GPS_L3GD20_Rotation_B.data[7] = read_frame.data[7];
+			case PCAN_GPS_L3GD20_ROTATION_B_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_L3GD20_Rotation_B);
 				PCAN_GPS_L3GD20_Rotation_B_fresh = TRUE;
 				can_stats.PCAN_GPS_L3GD20_Rotation_B_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_STATUS_ID : {
-				PCAN_GPS_GPS_Status.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Status.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Status.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Status.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Status.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Status.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Status.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Status.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_STATUS_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Status);
 				PCAN_GPS_GPS_Status_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Status_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_COURSESPEED_ID : {
-				PCAN_GPS_GPS_CourseSpeed.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_CourseSpeed.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_CourseSpeed.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_CourseSpeed.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_CourseSpeed.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_CourseSpeed.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_CourseSpeed.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_CourseSpeed.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_COURSESPEED_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_CourseSpeed);
 				PCAN_GPS_GPS_CourseSpeed_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_CourseSpeed_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_POSITIONLONGITUDE_ID : {
-				PCAN_GPS_GPS_Longitude.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Longitude.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Longitude.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Longitude.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Longitude.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Longitude.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Longitude.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Longitude.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_POSITIONLONGITUDE_ID :
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Longitude);
 				PCAN_GPS_GPS_Longitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Longitude_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_POSITIONLATITUDE_ID : {
-				PCAN_GPS_GPS_Latitude.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Latitude.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Latitude.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Latitude.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Latitude.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Latitude.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Latitude.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Latitude.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_POSITIONLATITUDE_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Latitude);
 				PCAN_GPS_GPS_Latitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Latitude_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_POSITIONALTITUDE_ID : {
-				PCAN_GPS_GPS_Altitude.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Altitude.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Altitude.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Altitude.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Altitude.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Altitude.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Altitude.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Altitude.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_POSITIONALTITUDE_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Altitude);
 				PCAN_GPS_GPS_Altitude_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Altitude_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_DELUSIONS_A_ID : {
-				PCAN_GPS_GPS_Delusions_A.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Delusions_A.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Delusions_A.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Delusions_A.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Delusions_A.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Delusions_A.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Delusions_A.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Delusions_A.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_DELUSIONS_A_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Delusions_A);
 				PCAN_GPS_GPS_Delusions_A_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Delusions_A_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_DELUSIONS_B_ID : {
-				PCAN_GPS_GPS_Delusions_B.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_Delusions_B.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_Delusions_B.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_Delusions_B.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_Delusions_B.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_Delusions_B.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_Delusions_B.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_Delusions_B.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_DELUSIONS_B_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_Delusions_B);
 				PCAN_GPS_GPS_Delusions_B_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_Delusions_B_count++;
 				break;
 			}
-			case PCAN_GPS_GPS_DATETIME_ID : {
-				PCAN_GPS_GPS_DateTime.data[0] = read_frame.data[0];
-				PCAN_GPS_GPS_DateTime.data[1] = read_frame.data[1];
-				PCAN_GPS_GPS_DateTime.data[2] = read_frame.data[2];
-				PCAN_GPS_GPS_DateTime.data[3] = read_frame.data[3];
-				PCAN_GPS_GPS_DateTime.data[4] = read_frame.data[4];
-				PCAN_GPS_GPS_DateTime.data[5] = read_frame.data[5];
-				PCAN_GPS_GPS_DateTime.data[6] = read_frame.data[6];
-				PCAN_GPS_GPS_DateTime.data[7] = read_frame.data[7];
+			case PCAN_GPS_GPS_DATETIME_ID : 
+			{
+				copy_can_frame(read_frame, PCAN_GPS_GPS_DateTime);
 				PCAN_GPS_GPS_DateTime_fresh = TRUE;
 				can_stats.PCAN_GPS_GPS_DateTime_count++;
 				break;
@@ -624,11 +509,13 @@ static void *can_read_reverse_thread()
                 perror("Unknown CAN frame ID");
             }
         }
+
+		pthread_mutex_unlock(&can_read_mutex);
     }
 }
 
 
-int fs_ai_api_init(char* CAN_interface, int debug, int simulate) {
+int fs_ai_api_init_direction (char* CAN_interface, int debug, int simulate, void * (can_reader)(void *)) {
 	static boolean_e initialised = FALSE;
 	int err;
 
@@ -657,7 +544,7 @@ int fs_ai_api_init(char* CAN_interface, int debug, int simulate) {
 	}
 
 	// spawn thread
-	err = pthread_create(&can_read_tid, NULL, &can_read_thread, NULL);
+	err = pthread_create(&can_read_tid, NULL, can_reader, NULL);
 	if(err != 0) {
 		if(debug_mode) { printf("Can't create CAN read thread:[%s]", strerror(err)); }
 		return(EXIT_FAILURE);
@@ -666,6 +553,16 @@ int fs_ai_api_init(char* CAN_interface, int debug, int simulate) {
 	clock_gettime(CLOCK_REALTIME,&last_set);
 	
 	return(EXIT_SUCCESS);
+}
+
+
+int fs_ai_api_init (char* CAN_interface, int debug, int simulate) {
+	return fs_ai_api_init_direction(CAN_interface, debug, simulate, &can_read_thread);
+}
+
+
+int fs_ai_api_init_reverse (char* CAN_interface, int debug, int simulate) {
+	return fs_ai_api_init_direction(CAN_interface, debug, simulate, &can_read_reverse_thread);
 }
 
 
