@@ -276,9 +276,12 @@ int fs_ai_api_init(char *CAN_interface, int debug, int simulate);
 int fs_ai_api_init_reverse(char *CAN_interface, int debug, int simulate);
 
 void fs_ai_api_vcu2ai_get_data(fs_ai_api_vcu2ai *data);
+void fs_ai_api_vcu2ai_set_data(fs_ai_api_vcu2ai *data);
 void fs_ai_api_ai2vcu_set_data(fs_ai_api_ai2vcu *data);
+void fs_ai_api_ai2vcu_get_data(fs_ai_api_ai2vcu *data);
 
 void fs_ai_api_imu_get_data(fs_ai_api_imu *data);
+void fs_ai_api_imu_set_data(fs_ai_api_imu *data);
 void fs_ai_api_gps_get_data(fs_ai_api_gps *data);
 
 void fs_ai_api_get_can_stats(can_stats_t *data);
