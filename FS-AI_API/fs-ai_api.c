@@ -108,13 +108,13 @@ static struct can_frame AI2VCU_Brake		= {AI2VCU_BRAKE_ID,2};
 #define VCU2AI_WHEEL_SPEEDS_ID	0x525
 #define VCU2AI_WHEEL_COUNTS_ID	0x526
 
-static struct can_frame VCU2AI_Status;
-static struct can_frame VCU2AI_Drive_F;
-static struct can_frame VCU2AI_Drive_R;
-static struct can_frame VCU2AI_Steer;
-static struct can_frame VCU2AI_Brake;
-static struct can_frame VCU2AI_Wheel_speeds;
-static struct can_frame VCU2AI_Wheel_counts;
+static struct can_frame VCU2AI_Status = 		{VCU2AI_STATUS_ID,8};
+static struct can_frame VCU2AI_Drive_F = 		{VCU2AI_DRIVE_F_ID,4};
+static struct can_frame VCU2AI_Drive_R = 		{VCU2AI_DRIVE_R_ID,4};
+static struct can_frame VCU2AI_Steer = 			{VCU2AI_STEER_ID,2};
+static struct can_frame VCU2AI_Brake = 			{VCU2AI_BRAKE_ID,2};
+static struct can_frame VCU2AI_Wheel_speeds = 	{VCU2AI_WHEEL_SPEEDS_ID,8};
+static struct can_frame VCU2AI_Wheel_counts = 	{VCU2AI_WHEEL_COUNTS_ID,8};
 
 #define PCAN_GPS_BMC_ACCELERATION_ID		0X600
 #define PCAN_GPS_BMC_MAGNETICFIELD_ID		0X628	// requires changing in PCAN-GPS firmware to avoid RES ID clash
@@ -129,18 +129,18 @@ static struct can_frame VCU2AI_Wheel_counts;
 #define PCAN_GPS_GPS_DELUSIONS_B_ID			0X626
 #define	PCAN_GPS_GPS_DATETIME_ID			0X627
 
-static struct can_frame PCAN_GPS_BMC_Acceleration;
-static struct can_frame PCAN_GPS_BMC_MagneticField;
-static struct can_frame PCAN_GPS_L3GD20_Rotation_A;
-static struct can_frame PCAN_GPS_L3GD20_Rotation_B;
-static struct can_frame PCAN_GPS_GPS_Status;
-static struct can_frame PCAN_GPS_GPS_CourseSpeed;
-static struct can_frame PCAN_GPS_GPS_Longitude;
-static struct can_frame PCAN_GPS_GPS_Latitude;
-static struct can_frame PCAN_GPS_GPS_Altitude;
-static struct can_frame PCAN_GPS_GPS_Delusions_A;
-static struct can_frame PCAN_GPS_GPS_Delusions_B;
-static struct can_frame PCAN_GPS_GPS_DateTime;
+static struct can_frame PCAN_GPS_BMC_Acceleration 	= {PCAN_GPS_BMC_ACCELERATION_ID,8};
+static struct can_frame PCAN_GPS_BMC_MagneticField 	= {PCAN_GPS_BMC_MAGNETICFIELD_ID,8};
+static struct can_frame PCAN_GPS_L3GD20_Rotation_A 	= {PCAN_GPS_L3GD20_ROTATION_A_ID,8};
+static struct can_frame PCAN_GPS_L3GD20_Rotation_B 	= {PCAN_GPS_L3GD20_ROTATION_B_ID,8};
+static struct can_frame PCAN_GPS_GPS_Status 		= {PCAN_GPS_GPS_STATUS_ID,8};
+static struct can_frame PCAN_GPS_GPS_CourseSpeed 	= {PCAN_GPS_GPS_COURSESPEED_ID,8};
+static struct can_frame PCAN_GPS_GPS_Longitude 		= {PCAN_GPS_GPS_POSITIONLONGITUDE_ID,8};
+static struct can_frame PCAN_GPS_GPS_Latitude		= {PCAN_GPS_GPS_POSITIONLATITUDE_ID,8};
+static struct can_frame PCAN_GPS_GPS_Altitude		= {PCAN_GPS_GPS_POSITIONALTITUDE_ID,8};
+static struct can_frame PCAN_GPS_GPS_Delusions_A	= {PCAN_GPS_GPS_DELUSIONS_A_ID,8};
+static struct can_frame PCAN_GPS_GPS_Delusions_B	= {PCAN_GPS_GPS_DELUSIONS_B_ID,8};
+static struct can_frame PCAN_GPS_GPS_DateTime		= {PCAN_GPS_GPS_DATETIME_ID,8};
 
 // static local data
 static can_stats_t can_stats;
@@ -718,17 +718,9 @@ void fs_ai_api_vcu2ai_set_data(fs_ai_api_vcu2ai *data)
 	VCU2AI_Steer.data[2] = temp.bytes[0];
 	VCU2AI_Steer.data[3] = temp.bytes[1];
 
-	clock_gettime(CLOCK_REALTIME,&this_set);
-
-	long int interval_ns = ((this_set.tv_sec-last_set.tv_sec)* 1000000000) + (this_set.tv_nsec-last_set.tv_nsec);
-	
-	if(interval_ns > 8000000) // enforce maximum call rate of approx. 8ms
-	{
-		// send the CAN frames
-		can_send(&VCU2AI_Wheel_speeds);
-		can_send(&VCU2AI_Steer);
-		clock_gettime(CLOCK_REALTIME,&last_set);
-	}
+	// send the CAN frames
+	can_send(&VCU2AI_Wheel_speeds);
+	can_send(&VCU2AI_Steer);
 }
 
 
@@ -1009,19 +1001,11 @@ void fs_ai_api_imu_set_data(fs_ai_api_imu *data)
 	temp = (can_data_t*)&PCAN_GPS_L3GD20_Rotation_B.data[0];
 	temp->floats[0] = IMU_Rotation_Z_degps;
 
-	clock_gettime(CLOCK_REALTIME,&this_set);
-
-	long int interval_ns = ((this_set.tv_sec-last_set.tv_sec)* 1000000000) + (this_set.tv_nsec-last_set.tv_nsec);
-	
-	if(interval_ns > 8000000) // enforce maximum call rate of approx. 8ms
-	{
-		// IMU data is transmitted over 3 GPS frames
-        // PCAN_GPS_BMC_Acceleration, PCAN_GPS_L3GD20_Rotation_A and PCAN_GPS_L3GD20_Rotation_B
-		can_send(&PCAN_GPS_BMC_Acceleration);
-        can_send(&PCAN_GPS_L3GD20_Rotation_A);
-        can_send(&PCAN_GPS_L3GD20_Rotation_B);
-		clock_gettime(CLOCK_REALTIME,&last_set);
-	}
+	// IMU data is transmitted over 3 GPS frames
+	// PCAN_GPS_BMC_Acceleration, PCAN_GPS_L3GD20_Rotation_A and PCAN_GPS_L3GD20_Rotation_B
+	can_send(&PCAN_GPS_BMC_Acceleration);
+	can_send(&PCAN_GPS_L3GD20_Rotation_A);
+	can_send(&PCAN_GPS_L3GD20_Rotation_B);
 }
 
 
