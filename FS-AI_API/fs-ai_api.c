@@ -477,7 +477,7 @@ static void *can_read_reverse_thread()
             case AI2VCU_STATUS_ID:
             {
                 copy_can_frame(&read_frame, &AI2VCU_Status);
-                AI2VCU_Brake_fresh = TRUE;
+                AI2VCU_Status_fresh = TRUE;
                 break;
             }
             case AI2VCU_DRIVE_F_ID:
@@ -726,7 +726,78 @@ void fs_ai_api_vcu2ai_set_data(fs_ai_api_vcu2ai *data)
 
 void fs_ai_api_ai2vcu_get_data(fs_ai_api_ai2vcu *data)
 {
+	pthread_mutex_lock(&can_read_mutex);
 
+	if (AI2VCU_Status_fresh)
+	{
+		AI2VCU_Status_fresh = FALSE;
+		AI2VCU_MISSION_STATUS = (AI2VCU_Status.data[1] & 0b00110000) >> 4;
+		AI2VCU_DIRECTION_REQUEST = (AI2VCU_Status.data[1] & 0b11000000) >> 6;
+		AI2VCU_ESTOP_REQUEST = AI2VCU_Status.data[1] & 0b00000001;
+		AI2VCU_HANDSHAKE_BIT = AI2VCU_Status.data[0] & 0x1;
+	}
+
+	if (AI2VCU_Drive_F_fresh)
+	{
+		AI2VCU_Drive_F_fresh = FALSE;
+		AI2VCU_FRONT_AXLE_TRQ_REQUEST_raw = AI2VCU_Drive_F.data[0] + (AI2VCU_Drive_F.data[1] << 8);
+		AI2VCU_FRONT_MOTOR_SPEED_MAX_rpm = AI2VCU_Drive_F.data[2] + (AI2VCU_Drive_F.data[3] << 8);
+	}
+
+	if (AI2VCU_Drive_R_fresh)
+	{
+		AI2VCU_Drive_R_fresh = FALSE;
+		AI2VCU_REAR_AXLE_TRQ_REQUEST_raw = AI2VCU_Drive_R.data[0] + (AI2VCU_Drive_R.data[1] << 8);
+		AI2VCU_REAR_MOTOR_SPEED_MAX_rpm = AI2VCU_Drive_R.data[2] + (AI2VCU_Drive_R.data[3] << 8);
+	}
+
+	if (AI2VCU_Steer_fresh)
+	{
+		AI2VCU_Steer_fresh = FALSE;
+		AI2VCU_STEER_REQUEST_raw = AI2VCU_Steer.data[0] + (AI2VCU_Steer.data[1] << 8);
+		if (AI2VCU_STEER_REQUEST_raw != 0)
+		{
+			fprintf(stderr, "AI2VCU_STEER_REQUEST_raw: %d\n", AI2VCU_STEER_REQUEST_raw);
+			perror("");
+		}
+	}
+
+	if (AI2VCU_Brake_fresh)
+	{
+		AI2VCU_Brake_fresh = FALSE;
+		AI2VCU_HYD_PRESS_F_REQ_raw = AI2VCU_Brake.data[0];
+		AI2VCU_HYD_PRESS_R_REQ_raw = AI2VCU_Brake.data[1];
+	}
+
+	pthread_mutex_unlock(&can_read_mutex);
+
+	// verify the data
+	if (AI2VCU_FRONT_AXLE_TRQ_REQUEST_raw - AI2VCU_REAR_AXLE_TRQ_REQUEST_raw > 1)
+	{
+		// they should be identical when sent
+		perror("Torque request mismatch");
+	}
+
+	if (AI2VCU_FRONT_MOTOR_SPEED_MAX_rpm - AI2VCU_REAR_MOTOR_SPEED_MAX_rpm > 1)
+	{
+		// they should be identical when sent
+		perror("Motor speed request mismatch");
+	}
+
+	if (AI2VCU_HYD_PRESS_F_REQ_raw - AI2VCU_HYD_PRESS_R_REQ_raw > 1)
+	{
+		// they should be identical when sent
+		perror("Hydraulic pressure request mismatch");
+	}
+
+	data->AI2VCU_MISSION_STATUS = AI2VCU_MISSION_STATUS;
+	data->AI2VCU_DIRECTION_REQUEST = AI2VCU_DIRECTION_REQUEST;
+	data->AI2VCU_ESTOP_REQUEST = AI2VCU_ESTOP_REQUEST;
+	data->AI2VCU_HANDSHAKE_SEND_BIT = AI2VCU_HANDSHAKE_BIT;
+	data->AI2VCU_STEER_ANGLE_REQUEST_deg = AI2VCU_STEER_REQUEST_raw / 10.0f;
+	data->AI2VCU_AXLE_SPEED_REQUEST_rpm = AI2VCU_FRONT_MOTOR_SPEED_MAX_rpm / MOTOR_RATIO; // reverse ros_can calculation
+	data->AI2VCU_AXLE_TORQUE_REQUEST_Nm = AI2VCU_FRONT_AXLE_TRQ_REQUEST_raw / 10.0f;
+	data->AI2VCU_BRAKE_PRESS_REQUEST_pct = AI2VCU_HYD_PRESS_F_REQ_raw / 2.0f; // reverse ros_can calculation
 }
 
 
